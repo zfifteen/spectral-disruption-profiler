@@ -1,0 +1,47 @@
+{
+  "dataset": "synthetic",
+  "k_value": 0.3,
+  "n_bootstraps": 10000,
+  "random_seed": 42,
+  "spectral": {
+    "auc": 0.5138949412145399,
+    "ci_lower": 0.4770558179787978,
+    "ci_upper": 0.5506107686542626,
+    "bootstrap_mean": 0.5140718143391952,
+    "bootstrap_std": 0.01870886276435348,
+    "n_bootstraps": 10000
+  },
+  "baseline": {
+    "auc": 0.48634235789019525,
+    "ci_lower": 0.44872129188019344,
+    "ci_upper": 0.5235575389682049,
+    "bootstrap_mean": 0.48611078134649743,
+    "bootstrap_std": 0.019274248030685073,
+    "n_bootstraps": 10000
+  },
+  "comparison": {
+    "method1_auc": 0.5138949412145399,
+    "method2_auc": 0.48634235789019525,
+    "delta_auc": 0.02755258332434468,
+    "delta_ci_lower": -0.01504185524224203,
+    "delta_ci_upper": 0.0708894348292149,
+    "delta_mean": 0.027743974678989106,
+    "delta_std": 0.02177659955539545,
+    "p_value_bootstrap": 0.1004,
+    "ci_excludes_zero": false,
+    "n_bootstraps": 10000
+  },
+  "delong_test": {
+    "auc1": 0.5138949412145399,
+    "auc2": 0.48634235789019525,
+    "delta_auc": 0.02755258332434468,
+    "z_statistic": 0.8392469445681449,
+    "p_value": 0.40133074891214493
+  },
+  "permutation_test": {
+    "delta_auc_observed": 0.02755258332434468,
+    "p_value_permutation": 0.2624,
+    "n_permutations": 10000
+  },
+  "timestamp": "2025-11-18T06:20:44.964092"
+}
