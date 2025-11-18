@@ -3,6 +3,7 @@ numpy
 scipy
 sympy
 biopython
+scikit-learn
 
 # Web framework
 fastapi
