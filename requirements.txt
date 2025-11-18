@@ -1,0 +1,19 @@
+# Core dependencies
+numpy
+scipy
+sympy
+biopython
+
+# Web framework
+fastapi
+uvicorn
+
+# Data
+pandas
+matplotlib
+
+# Testing
+pytest
+
+# Optional for cloud
+boto3  # AWS
