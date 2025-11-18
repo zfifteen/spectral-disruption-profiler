@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from typing import Tuple, Dict, Optional
 import os
+from pathlib import Path
 
 
 def generate_synthetic_dataset(n_samples: int = 1000, 
@@ -107,20 +108,40 @@ def load_doench_2016_dataset() -> Optional[pd.DataFrame]:
     """
     Load Doench 2016 dataset if available.
     
-    This is a placeholder - in practice, this would download or load
-    the actual Doench 2016 data from a public source.
+    This loads the processed dataset from datasets/doench2016/doench2016_processed.csv
+    if it has been downloaded and prepared using proof_pack/download_datasets.py
     
     Returns:
-        DataFrame or None if not available
+        DataFrame with columns: sequence, efficacy
+        None if not available
     """
-    # TODO: Implement actual data loading
-    # For now, return None to indicate it's not available
-    # In a real implementation, this would fetch from:
-    # - Supplementary data from the publication
-    # - A public repository like Zenodo
-    # - Or generate from raw data files
+    # Get the repository root directory
+    current_file = Path(__file__).resolve()
+    repo_root = current_file.parent.parent
     
-    return None
+    doench_file = repo_root / 'datasets' / 'doench2016' / 'doench2016_processed.csv'
+    
+    if doench_file.exists():
+        try:
+            df = pd.read_csv(doench_file)
+            
+            # Validate required columns
+            if 'sequence' not in df.columns or 'efficacy' not in df.columns:
+                print(f"Warning: Doench 2016 file missing required columns")
+                return None
+            
+            # Ensure efficacy is in [0, 1] range
+            if df['efficacy'].max() > 1:
+                # Normalize to [0, 1] if needed
+                df['efficacy'] = (df['efficacy'] - df['efficacy'].min()) / (df['efficacy'].max() - df['efficacy'].min())
+            
+            return df
+        except Exception as e:
+            print(f"Error loading Doench 2016 dataset: {e}")
+            return None
+    else:
+        # Return None - dataset not downloaded yet
+        return None
 
 
 def load_dataset_by_name(dataset_name: str) -> Optional[pd.DataFrame]:
