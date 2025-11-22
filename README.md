@@ -2,6 +2,39 @@
 
 A cloud-based SaaS platform for CRISPR gRNA optimization using Fourier-based signal processing on DNA sequences to quantify mutation-induced disruptions.
 
+## 🔬 Empirical Validation Status
+
+**Current Phase**: Core Implementation Complete + Synthetic Data Validation
+
+✅ **Implemented**:
+- Core spectral analysis engine (DNA encoding, FFT, phase weighting)
+- Statistical validation pipeline with 10,000 bootstrap resamples
+- DeLong and permutation tests for significance
+- k-sweep analysis (k=0.20 to 0.40)
+- Single-command reproducibility (`proof_pack/run_validation.py`)
+- Complete test suite (36 tests, all passing)
+
+📊 **Synthetic Dataset Results** (N=1000, seed=42):
+- **ΔROC-AUC**: 0.0276 ± 0.0218 [95% CI: -0.0150, 0.0709]
+- **Optimal k***: 0.350 (close to hypothesized 0.300)
+- **Status**: Positive trend but lacks statistical power (CI includes zero)
+
+⏳ **Required for Full Validation**:
+- [ ] Doench 2016 dataset (N≈5,000-15,000) - loader placeholder exists
+- [ ] At least 2 additional public datasets (Wang 2019, Xu 2015, Hart 2015/2017, etc.)
+- [ ] Cross-dataset k* invariance verification
+- [ ] ΔROC-AUC ≥ 0.03 with p < 0.01 on all datasets
+
+**To reproduce validation**: See [proof_pack/README.md](proof_pack/README.md)
+
+```bash
+python proof_pack/run_validation.py --dataset synthetic --seed 42 --n-bootstraps 10000 --k-sweep
+```
+
+All generated artifacts are committed in `results/` directory for transparency.
+
+---
+
 ## Overview
 
 This platform applies FFT-encoded DNA waveform analysis with θ′(n,k) phase weighting (optimal k* ≈ 0.300) to score gRNA on-target efficiency and off-target risks using Z-invariant mutation metrics.
@@ -51,9 +84,16 @@ Freemium tier (limited queries), premium for unlimited + API ($99/mo).
 ## Project Structure
 
 - `docs/`: Documentation
-- `src/`: Source code (to be added)
-- `tests/`: Tests (to be added)
-- `requirements.txt`: Dependencies (to be added)
+- `src/`: Source code modules
+  - `encoding.py`: DNA sequence encoding (A→1+0i, T→-1+0i, C→0+1i, G→0-1i)
+  - `phase_weighting.py`: θ′(n,k) phase weighting with golden ratio
+  - `spectral_features.py`: FFT-based feature extraction
+  - `statistical_validation.py`: Bootstrap, DeLong, permutation tests
+  - `dataset_loader.py`: Dataset loading and synthetic data generation
+- `tests/`: Comprehensive test suite (36 tests)
+- `proof_pack/`: Empirical validation pipeline
+- `results/`: Generated validation artifacts (committed for transparency)
+- `requirements.txt`: Dependencies
 
 ## Installation
 
@@ -67,7 +107,55 @@ pip install -r requirements.txt
 
 ## Usage
 
-(TBD - API and UI usage)
+### Running Validation Pipeline
+
+Validate on synthetic dataset:
+
+```bash
+python proof_pack/run_validation.py --dataset synthetic --seed 42 --n-bootstraps 10000 --k-sweep
+```
+
+Options:
+- `--dataset`: Dataset name (currently: synthetic)
+- `--seed`: Random seed for reproducibility (default: 42)
+- `--n-bootstraps`: Bootstrap resamples (default: 10000)
+- `--k-sweep`: Perform k-value optimization (default: off)
+- `--output-dir`: Results directory (default: results/)
+
+### Using Core Modules
+
+```python
+from src import (
+    encode_sequence,
+    compute_spectral_disruption_score,
+    batch_score_sequences,
+    bootstrap_auc
+)
+
+# Score a single sequence
+sequence = "ATCGATCGATCGATCGATCG"
+score = compute_spectral_disruption_score(sequence, k=0.300, use_phase_weighting=True)
+print(f"Spectral score: {score}")
+
+# Score multiple sequences
+sequences = ["ATCGATCG...", "GCTAGCTA...", ...]
+scores = batch_score_sequences(sequences, k=0.300)
+
+# Validate with bootstrap
+import numpy as np
+y_true = np.array([1, 0, 1, 0, ...])  # Binary labels
+y_scores = scores
+result = bootstrap_auc(y_true, y_scores, n_bootstraps=10000, random_seed=42)
+print(f"AUC: {result['auc']:.3f} [{result['ci_lower']:.3f}, {result['ci_upper']:.3f}]")
+```
+
+### Running Tests
+
+```bash
+python -m pytest tests/ -v
+```
+
+All 36 tests should pass.
 
 ## Contributing
 

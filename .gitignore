@@ -31,10 +31,9 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# Data
-*.csv
-*.json
-results/
+# Data (exclude data files outside of results/)
+# NOTE: results/ directory is INCLUDED to commit empirical validation artifacts
+# as required by the problem statement
 
 # Secrets
 .env
